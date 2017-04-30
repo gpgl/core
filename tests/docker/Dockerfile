@@ -2,6 +2,9 @@ FROM ubuntu:16.04
 
 MAINTAINER Jeff Puckett
 
+COPY pw.asc /root/pw.asc
+COPY nopw.asc /root/nopw.asc
+
 RUN apt-get update && apt-get install -y php php-mbstring wget php-zip php-xml php-xdebug \
     && EXPECTED_SIGNATURE=$(wget -q -O - https://composer.github.io/installer.sig) \
     && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
@@ -16,7 +19,9 @@ RUN apt-get update && apt-get install -y php php-mbstring wget php-zip php-xml p
     && mv composer.phar /usr/bin/composer \
     && apt-get purge -y wget \
     && apt-get clean \
-    && rm -rf composer-setup.php /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    && rm -rf composer-setup.php /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    && gpg --import /root/pw.asc \
+    && gpg --import /root/nopw.asc
 
 WORKDIR /code
 

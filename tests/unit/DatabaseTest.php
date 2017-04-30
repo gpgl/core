@@ -6,8 +6,10 @@ use gpgl\core\Database;
 
 class DatabaseTest extends TestCase
 {
-    protected $filename;
+    protected $filename = __DIR__.'/../data/.gpgldb';
     protected $database;
+    protected $key = 'jeff@example.com';
+    protected $password = 'password';
 
     protected function setUp()
     {
@@ -22,7 +24,7 @@ class DatabaseTest extends TestCase
 
     public function test_creates_database()
     {
-        $db = new Database;
+        $db = new Database($this->filename, $this->key, $this->password);
 
         $this->assertInstanceOf(Database::class, $db);
     }
@@ -34,7 +36,20 @@ class DatabaseTest extends TestCase
             'second',
         ];
 
-        $db = new Database;
+        $db = new Database($this->filename, $this->key, $this->password);
+        $actual = $db->index();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function test_gets_index_from_filename_env()
+    {
+        $expected = [
+            'first',
+            'second',
+        ];
+
+        $db = new Database($filename = null, $this->key, $this->password);
         $actual = $db->index();
 
         $this->assertEquals($expected, $actual);
@@ -47,7 +62,7 @@ class DatabaseTest extends TestCase
             "password" => "pass",
         ];
 
-        $db = new Database;
+        $db = new Database($this->filename, $this->key, $this->password);
         $actual = $db->get('first');
 
         $this->assertEquals($expected, $actual);
@@ -60,7 +75,7 @@ class DatabaseTest extends TestCase
             "password" => "word",
         ];
 
-        $db = new Database;
+        $db = new Database($this->filename, $this->key, $this->password);
         $empty = $db->get('test_sets_key');
         $this->assertEmpty($empty);
 
@@ -77,13 +92,13 @@ class DatabaseTest extends TestCase
             "password" => "word",
         ];
 
-        $orig = new Database;
+        $orig = new Database($this->filename, $this->key, $this->password);
         $empty = $orig->get('test_saves_db');
         $this->assertEmpty($empty);
         $orig->set('test_saves_db', $expected);
 
         $this->assertTrue($orig->export());
-        $new = new Database;
+        $new = new Database($this->filename, $this->key, $this->password);
         $actual = $new->get('test_saves_db');
 
         $this->assertEquals($expected, $actual);

@@ -3,7 +3,7 @@ language: php
 services:
   - docker
 before_install:
-  - docker build -t gpgl/test-core ./tests
+  - docker build -t gpgl/test-core ./tests/docker
 install:
   - docker run --rm -it -v "$PWD":/code gpgl/test-core composer install
 script:
