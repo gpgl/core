@@ -9,7 +9,7 @@
         processIsolation="false"
         stopOnFailure="false">
     <testsuites>
-        <testsuite name="Passlock Test Suite">
+        <testsuite name="GPGL Core Test Suite">
             <directory>./tests/unit</directory>
         </testsuite>
     </testsuites>
