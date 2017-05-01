@@ -27,6 +27,11 @@ class Database
         $this->import($filename, $password, $key);
     }
 
+    public static function create(string $filename, string $key) : self
+    {
+        return new static;
+    }
+
     public function index() : array
     {
         return array_keys($this->data);

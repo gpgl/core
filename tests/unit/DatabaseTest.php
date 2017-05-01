@@ -29,7 +29,7 @@ class DatabaseTest extends TestCase
         file_put_contents($this->filename_nopw, $this->database_nopw);
     }
 
-    public function test_creates_database()
+    public function test_instantiates_database_class()
     {
         $db = new Database($this->filename_pw, $this->password, $this->key_pw);
 
@@ -167,5 +167,16 @@ class DatabaseTest extends TestCase
         $actual = $db->get('one');
 
         $this->assertEquals($expected, $actual);
+    }
+
+    public function test_creates_database()
+    {
+        $filename = 'test_creates_database.gpgldb';
+        $this->assertFileNotExists($filename);
+
+        $db = Database::create($filename, $this->key_nopw);
+        $this->assertFileExists($filename);
+
+        $this->assertInstanceOf(Database::class, $db);
     }
 }
