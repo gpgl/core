@@ -84,7 +84,8 @@ class Database
      */
     public static function getFirstKeyIdFromEncryptedData(string $filename) : string
     {
-        $output = `2>&1 gpg --list-only --verbose '$filename'`;
+        $filename = escapeshellarg($filename);
+        $output = `2>&1 gpg --list-only --verbose $filename`;
         $lines = explode(PHP_EOL, $output);
         $words = explode(' ', $lines[0]);
         return end($words);
