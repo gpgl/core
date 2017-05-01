@@ -3,6 +3,7 @@
 namespace gpgl\core;
 
 use Crypt_GPG;
+use Crypt_GPG_BadPassphraseException;
 
 class Database
 {
@@ -12,7 +13,7 @@ class Database
     protected $key;
     protected $password;
 
-    public function __construct(string $filename = null, string $key = null, string $password = null)
+    public function __construct(string $filename = null, string $password = null, string $key = null)
     {
         $this->gpg = new Crypt_GPG;
 
@@ -23,7 +24,7 @@ class Database
             $filename = getenv('GPGL_DB');
         }
 
-        $this->import($filename);
+        $this->import($filename, $password, $key);
     }
 
     public function index() : array
@@ -41,18 +42,24 @@ class Database
         return $values === $this->data[$key] = $values;
     }
 
-    protected function import(string $filename, string $key = null, string $password = null) : array
+    protected function import(string $filename, string $password = null, string $key = null) : array
     {
-        if (empty($key)) {
-            $key = $this->key;
-        }
+        try {
 
-        if (empty($password)) {
-            $password = $this->password;
-        }
+            // default no password needed
+            $json = $this->gpg->decryptFile($filename);
 
-        $json = $this->gpg->addDecryptKey($this->key, $this->password)
-                    ->decryptFile($filename);
+        } catch (Crypt_GPG_BadPassphraseException $ex) {
+
+            if (empty($key)) {
+                $key = static::getFirstKeyIdFromEncryptedData($filename);
+            }
+
+            $json = $this->gpg
+                ->addDecryptKey($key, $password)
+                ->decryptFile($filename);
+
+        }
 
         $this->filename = $filename;
         $this->key = $key;
@@ -69,5 +76,17 @@ class Database
                         ->encrypt($json, $ascii = false);
 
         return false !== file_put_contents($this->filename, $encrypted);
+    }
+
+    /**
+     * @param  string $filename Name of encrypted file.
+     * @return string The key ID of the *first* recipient.
+     */
+    public static function getFirstKeyIdFromEncryptedData(string $filename) : string
+    {
+        $output = `2>&1 gpg --list-only --verbose '$filename'`;
+        $lines = explode(PHP_EOL, $output);
+        $words = explode(' ', $lines[0]);
+        return end($words);
     }
 }

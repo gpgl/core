@@ -31,7 +31,7 @@ class DatabaseTest extends TestCase
 
     public function test_creates_database()
     {
-        $db = new Database($this->filename_pw, $this->key_pw, $this->password);
+        $db = new Database($this->filename_pw, $this->password, $this->key_pw);
 
         $this->assertInstanceOf(Database::class, $db);
     }
@@ -43,7 +43,7 @@ class DatabaseTest extends TestCase
             'second',
         ];
 
-        $db = new Database($this->filename_pw, $this->key_pw, $this->password);
+        $db = new Database($this->filename_pw, $this->password, $this->key_pw);
         $actual = $db->index();
 
         $this->assertEquals($expected, $actual);
@@ -57,7 +57,7 @@ class DatabaseTest extends TestCase
             'second',
         ];
 
-        $db = new Database($filename_pw = null, $this->key_pw, $this->password);
+        $db = new Database($filename_pw = null, $this->password, $this->key_pw);
         $actual = $db->index();
 
         $this->assertEquals($expected, $actual);
@@ -70,7 +70,7 @@ class DatabaseTest extends TestCase
             "password" => "pass",
         ];
 
-        $db = new Database($this->filename_pw, $this->key_pw, $this->password);
+        $db = new Database($this->filename_pw, $this->password, $this->key_pw);
         $actual = $db->get('first');
 
         $this->assertEquals($expected, $actual);
@@ -83,7 +83,7 @@ class DatabaseTest extends TestCase
             "password" => "word",
         ];
 
-        $db = new Database($this->filename_pw, $this->key_pw, $this->password);
+        $db = new Database($this->filename_pw, $this->password, $this->key_pw);
         $empty = $db->get('test_sets_key');
         $this->assertEmpty($empty);
 
@@ -100,13 +100,13 @@ class DatabaseTest extends TestCase
             "password" => "word",
         ];
 
-        $orig = new Database($this->filename_pw, $this->key_pw, $this->password);
+        $orig = new Database($this->filename_pw, $this->password, $this->key_pw);
         $empty = $orig->get('test_saves_db');
         $this->assertEmpty($empty);
         $orig->set('test_saves_db', $expected);
 
         $this->assertTrue($orig->export());
-        $new = new Database($this->filename_pw, $this->key_pw, $this->password);
+        $new = new Database($this->filename_pw, $this->password, $this->key_pw);
         $actual = $new->get('test_saves_db');
 
         $this->assertEquals($expected, $actual);
@@ -119,7 +119,7 @@ class DatabaseTest extends TestCase
             "password" => "nopw",
         ];
 
-        $db = new Database($this->filename_nopw, $this->key_nopw);
+        $db = new Database($this->filename_nopw, $password = null, $this->key_nopw);
         $actual = $db->get('one');
 
         $this->assertEquals($expected, $actual);
@@ -130,7 +130,7 @@ class DatabaseTest extends TestCase
      */
     public function test_rejects_missing_password()
     {
-        $db = new Database($this->filename_pw, $this->key_pw);
+        $db = new Database($this->filename_pw, $password = null, $this->key_pw);
         $actual = $db->get('first');
     }
 
@@ -139,7 +139,33 @@ class DatabaseTest extends TestCase
      */
     public function test_rejects_bad_password()
     {
-        $db = new Database($this->filename_pw, $this->key_pw, 'bad password');
+        $db = new Database($this->filename_pw, 'bad password', $this->key_pw);
         $actual = $db->get('first');
+    }
+
+    public function test_deduces_key_with_password()
+    {
+        $expected = [
+            "username" => "jeff",
+            "password" => "pass",
+        ];
+
+        $db = new Database($this->filename_pw, $this->password);
+        $actual = $db->get('first');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function test_deduces_key_without_password()
+    {
+        $expected = [
+            "username" => "none",
+            "password" => "nopw",
+        ];
+
+        $db = new Database($this->filename_nopw);
+        $actual = $db->get('one');
+
+        $this->assertEquals($expected, $actual);
     }
 }
