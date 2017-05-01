@@ -24,7 +24,4 @@
         <log type="coverage-text" target="php://stdout"
             showUncoveredFiles="false"/>
     </logging>
-    <php>
-        <env name="GPGL_DB" value="./tests/data/.gpgldb" />
-    </php>
 </phpunit>

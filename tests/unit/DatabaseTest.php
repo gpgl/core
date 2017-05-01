@@ -13,12 +13,13 @@ class DatabaseTest extends TestCase
 
     protected function setUp()
     {
-        $this->filename = getenv('GPGL_DB');
+        putenv('GPGL_DB');
         $this->database = file_get_contents($this->filename);
     }
 
     protected function tearDown()
     {
+        putenv('GPGL_DB');
         file_put_contents($this->filename, $this->database);
     }
 
@@ -44,6 +45,7 @@ class DatabaseTest extends TestCase
 
     public function test_gets_index_from_filename_env()
     {
+        putenv("GPGL_DB={$this->filename}");
         $expected = [
             'first',
             'second',
