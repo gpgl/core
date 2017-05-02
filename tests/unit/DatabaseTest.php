@@ -172,11 +172,15 @@ class DatabaseTest extends TestCase
     public function test_creates_database()
     {
         $filename = 'test_creates_database.gpgldb';
+        touch($filename);
+        unlink($filename);
         $this->assertFileNotExists($filename);
 
         $db = Database::create($filename, $this->key_nopw);
         $this->assertFileExists($filename);
 
         $this->assertInstanceOf(Database::class, $db);
+
+        unlink($filename);
     }
 }

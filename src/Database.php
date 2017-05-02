@@ -4,11 +4,12 @@ namespace gpgl\core;
 
 use Crypt_GPG;
 use Crypt_GPG_BadPassphraseException;
+use InvalidArgumentException;
 
 class Database
 {
     protected $filename;
-    protected $data;
+    protected $data = [];
     protected $gpg;
     protected $key;
     protected $password;
@@ -20,16 +21,21 @@ class Database
         $this->key = $key;
         $this->password = $password;
 
-        if (empty($filename)) {
-            $filename = getenv('GPGL_DB');
+        if (!empty($filename)) {
+            $this->import($filename, $password, $key);
         }
-
-        $this->import($filename, $password, $key);
     }
 
-    public static function create(string $filename, string $key) : self
+    public static function create(string $filename, string $key, string $password = null) : Database
     {
-        return new static;
+        if (false === file_put_contents($filename, json_encode([]))) {
+            throw new InvalidArgumentException("Could not write: $filename");
+        }
+
+        $db = new static($filename = null, $password, $key);
+        $db->import($filename, $password = null, $key = null, $encrypted = false);
+
+        return $db;
     }
 
     public function index() : array
@@ -47,23 +53,25 @@ class Database
         return $values === $this->data[$key] = $values;
     }
 
-    protected function import(string $filename, string $password = null, string $key = null) : array
+    public function import(string $filename, string $password = null, string $key = null, bool $encrypted = true) : array
     {
-        try {
+        if ($encrypted) {
+            try {
 
-            // default no password needed
-            $json = $this->gpg->decryptFile($filename);
+                // default no password needed
+                $json = $this->gpg->decryptFile($filename);
 
-        } catch (Crypt_GPG_BadPassphraseException $ex) {
+            } catch (Crypt_GPG_BadPassphraseException $ex) {
 
-            if (empty($key)) {
-                $key = static::getFirstKeyIdFromEncryptedData($filename);
+                if (empty($key)) {
+                    $key = static::getFirstKeyIdFromEncryptedData($filename);
+                }
+
+                $json = $this->gpg
+                    ->addDecryptKey($key, $password)
+                    ->decryptFile($filename);
+
             }
-
-            $json = $this->gpg
-                ->addDecryptKey($key, $password)
-                ->decryptFile($filename);
-
         }
 
         $this->filename = $filename;
