@@ -7,24 +7,32 @@ use gpgl\core\DatabaseManagementSystem;
 class DatabaseManagementSystemTest extends TestCase
 {
     protected $filename_pw = __DIR__.'/../fixtures/pw.gpgldb';
+    protected $filename_pw_perms;
     protected $db_pw;
     protected $key_pw = 'jeff@example.com';
     protected $password = 'password';
 
     protected $filename_nopw = __DIR__.'/../fixtures/nopw.gpgldb';
+    protected $filename_nopw_perms;
     protected $db_nopw;
     protected $key_nopw = 'nopassword@example.com';
 
     protected function setUp()
     {
+        $this->filename_pw_perms = substr(sprintf('%o', fileperms($this->filename_pw)), -4);
         $this->db_pw = file_get_contents($this->filename_pw);
+
+        $this->filename_nopw_perms = substr(sprintf('%o', fileperms($this->filename_nopw)), -4);
         $this->db_nopw = file_get_contents($this->filename_nopw);
     }
 
     protected function tearDown()
     {
         file_put_contents($this->filename_pw, $this->db_pw);
+        chmod($this->filename_pw, $this->filename_pw_perms);
+
         file_put_contents($this->filename_nopw, $this->db_nopw);
+        chmod($this->filename_nopw, $this->filename_nopw_perms);
     }
 
     public function test_instantiates_dbms_class()
@@ -177,5 +185,20 @@ class DatabaseManagementSystemTest extends TestCase
         $this->assertInstanceOf(DatabaseManagementSystem::class, $dbms);
 
         unlink($filename);
+    }
+
+    /**
+     * @expectedException UnwritableFile
+     */
+    public function test_rejects_unwritable_file()
+    {
+        $this->assertTrue(chmod($this->filename_pw, 0000));
+
+        $dbms = new DatabaseManagementSystem($this->filename_pw, $this->password, $this->key_pw);
+        $empty = $dbms->get('test_saves_db');
+        $this->assertEmpty($empty);
+
+        $dbms->set('test_saves_db', ['some'=>'data']);
+        $dbms->export();
     }
 }
