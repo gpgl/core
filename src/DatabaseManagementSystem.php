@@ -4,6 +4,7 @@ namespace gpgl\core;
 
 use Crypt_GPG;
 use Crypt_GPG_BadPassphraseException;
+use gpgl\core\Exceptions\PreExistingFile;
 use Exceptions\UnwritableFile;
 
 class DatabaseManagementSystem
@@ -35,6 +36,10 @@ class DatabaseManagementSystem
 
     public static function create(string $filename, string $key, string $password = null) : DatabaseManagementSystem
     {
+        if (file_exists($filename)) {
+            throw new PreExistingFile("File already exists: $filename");
+        }
+
         $dbms = new static;
 
         $dbms->setFilename($filename)->setKey($key);

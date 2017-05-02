@@ -15,6 +15,8 @@ class DatabaseManagementSystemTest extends TestCase
     protected $db_nopw;
     protected $key_nopw = 'nopassword@example.com';
 
+    protected $filename_temp = __DIR__.'/../fixtures/test_creates_dbms.gpgldb';
+
     protected function setUp()
     {
         $this->db_pw = file_get_contents($this->filename_pw);
@@ -25,6 +27,10 @@ class DatabaseManagementSystemTest extends TestCase
     {
         file_put_contents($this->filename_pw, $this->db_pw);
         file_put_contents($this->filename_nopw, $this->db_nopw);
+
+        if (file_exists($this->filename_temp)) {
+            unlink(realpath($this->filename_temp));
+        }
     }
 
     public function test_instantiates_dbms_class()
@@ -166,7 +172,7 @@ class DatabaseManagementSystemTest extends TestCase
 
     public function test_creates_dbms()
     {
-        $filename = 'test_creates_dbms.gpgldb';
+        $filename = $this->filename_temp;
         touch($filename);
         unlink($filename);
         $this->assertFileNotExists($filename);
@@ -175,7 +181,17 @@ class DatabaseManagementSystemTest extends TestCase
         $this->assertFileExists($filename);
 
         $this->assertInstanceOf(DatabaseManagementSystem::class, $dbms);
+    }
 
-        unlink($filename);
+    /**
+     * @expectedException \gpgl\core\Exceptions\PreExistingFile
+     */
+    public function test_rejects_clobber_creation()
+    {
+        $filename = $this->filename_temp;
+        touch($filename);
+        $this->assertFileExists($filename);
+
+        $dbms = DatabaseManagementSystem::create($filename, $this->key_nopw);
     }
 }
