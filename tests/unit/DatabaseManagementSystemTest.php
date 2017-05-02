@@ -112,7 +112,7 @@ class DatabaseManagementSystemTest extends TestCase
     }
 
     /**
-     * @expectedException TypeError
+     * @expectedException Crypt_GPG_BadPassphraseException
      */
     public function test_rejects_missing_password()
     {
