@@ -58,14 +58,14 @@ class DatabaseManagementSystem
         return array_keys($this->database->getData());
     }
 
-    public function get(string $key) : array
+    public function get(string ...$keys)
     {
-        return $this->database->get($key) ?? [];
+        return $this->database->get(...$keys);
     }
 
-    public function set(string $key, array $values) : DatabaseManagementSystem
+    public function set($values, string ...$keys) : DatabaseManagementSystem
     {
-        $this->database->set($key, $values);
+        $this->database->set($values, ...$keys);
         return $this;
     }
 

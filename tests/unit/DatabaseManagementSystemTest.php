@@ -78,7 +78,7 @@ class DatabaseManagementSystemTest extends TestCase
         $empty = $dbms->get('test_sets_key');
         $this->assertEmpty($empty);
 
-        $dbms->set('test_sets_key', $expected);
+        $dbms->set($expected, 'test_sets_key');
 
         $actual = $dbms->get('test_sets_key');
         $this->assertEquals($expected, $actual);
@@ -95,7 +95,7 @@ class DatabaseManagementSystemTest extends TestCase
         $empty = $orig->get('test_saves_db');
         $this->assertEmpty($empty);
 
-        $orig->set('test_saves_db', $expected);
+        $orig->set($expected, 'test_saves_db');
         $orig->export();
 
         $new = new DatabaseManagementSystem($this->filename_pw, $this->password, $this->key_pw);

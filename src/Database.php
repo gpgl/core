@@ -22,14 +22,32 @@ class Database
         return $this;
     }
 
-    public function get(string $key)
+    public function get(string ...$keys)
     {
-        return $this->data[$key] ?? null;
+        $data = $this->data;
+
+        while ($key = array_shift($keys)) {
+            if (!isset($data[$key])) {
+                return null;
+            }
+
+            $data = $data[$key];
+        }
+
+        return $data;
     }
 
-    public function set(string $key, $value) : Database
+    public function set($value, string ...$keys) : Database
     {
-        $this->data[$key] = $value;
+        $data =& $this->data;
+
+        while ($key = array_shift($keys)) {
+            $data[$key] = $data[$key] ?? [];
+            $data =& $data[$key];
+        }
+
+        $data = $value;
+
         return $this;
     }
 }
