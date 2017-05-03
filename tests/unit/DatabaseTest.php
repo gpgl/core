@@ -44,6 +44,43 @@ class DatabaseTest extends TestCase
         ];
     }
 
+    public function indexDataProvider()
+    {
+        return [
+            [
+                0,
+                [
+                    'first' => [
+                        'second' => [
+                            'third' => 'three',
+                        ],
+                        'deuxième' => 'two',
+                    ],
+                ], [
+                    'first',
+                ],
+            ],
+            [
+                -1,
+                [
+                    'first' => [
+                        'second' => [
+                            'third' => 'three',
+                        ],
+                        'deuxième' => 'two',
+                    ],
+                ], [
+                    'first' => [
+                        'second' => [
+                            'third',
+                        ],
+                        'deuxième',
+                    ],
+                ],
+            ],
+        ];
+    }
+
     /**
      * @dataProvider valuesDataProvider
      */
@@ -65,6 +102,18 @@ class DatabaseTest extends TestCase
 
         $db->set($expected, ...$keys);
         $actual = $db->get(...$keys);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @dataProvider indexDataProvider
+     */
+    public function test_gets_index(int $level, array $data, array $expected)
+    {
+        $db = new Database($data);
+
+        $actual = $db->index($level);
 
         $this->assertEquals($expected, $actual);
     }

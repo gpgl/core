@@ -55,7 +55,7 @@ class DatabaseManagementSystem
 
     public function index() : array
     {
-        return array_keys($this->database->getData());
+        return $this->database->index();
     }
 
     public function get(string ...$keys)
