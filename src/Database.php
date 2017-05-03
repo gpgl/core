@@ -6,6 +6,11 @@ class Database
 {
     protected $data = [];
 
+    public function __construct(array $data = [])
+    {
+        $this->setData($data);
+    }
+
     public function getData() : array
     {
         return $this->data;
