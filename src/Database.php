@@ -65,12 +65,13 @@ class Database
             $array = static::getFrom($array, ...$keys) ?? [];
         }
 
-        if ($limit === 1) {
+        // return if this is the only level, else decrement and continue
+        if ($limit-- === 1) {
             return array_keys($array);
         }
 
         foreach ($array as $key => $value) {
-            if (is_array($value) && --$limit) {
+            if (is_array($value) && $limit) {
                 $index[$key] = static::array_keys_recursive($value, $limit);
             } else {
                 $index []= $key;

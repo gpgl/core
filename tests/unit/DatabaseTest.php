@@ -82,15 +82,49 @@ class DatabaseTest extends TestCase
                 2,
                 [
                     'first' => [
-                        'second' => [
+                        'second' => 'two',
+                        'deuxième' => [
                             'third' => 'three',
+                            'troisième' => 'three',
                         ],
-                        'deuxième' => 'two',
+                        'segundo' => 'two',
                     ],
+                    'premier' => 'one',
                 ], [
                     'first' => [
                         'second',
                         'deuxième',
+                        'segundo',
+                    ],
+                    'premier',
+                ],
+            ],
+            [
+                2,
+                array (
+                    'uno' => array (
+                        'username' => 'john',
+                        'password' => 'p@s5',
+                    ),
+                    'dos' => array (
+                        'everything' => 'all',
+                        'something' => array (
+                            'hither' => 'this',
+                            'dither' => 'that',
+                        ),
+                        'anything' => 'one',
+                        'nothing' => 'nil',
+                    ),
+                ), [
+                    'uno' => [
+                        'username',
+                        'password',
+                    ],
+                    'dos' => [
+                        'everything',
+                        'something',
+                        'anything',
+                        'nothing',
                     ],
                 ],
             ],
