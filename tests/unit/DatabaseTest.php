@@ -57,11 +57,29 @@ class DatabaseTest extends TestCase
                         'deuxième' => 'two',
                     ],
                 ], [
+                    'first' => [
+                        'second' => [
+                            'third',
+                        ],
+                        'deuxième',
+                    ],
+                ],
+            ],
+            [
+                1,
+                [
+                    'first' => [
+                        'second' => [
+                            'third' => 'three',
+                        ],
+                        'deuxième' => 'two',
+                    ],
+                ], [
                     'first',
                 ],
             ],
             [
-                -1,
+                2,
                 [
                     'first' => [
                         'second' => [
@@ -71,9 +89,7 @@ class DatabaseTest extends TestCase
                     ],
                 ], [
                     'first' => [
-                        'second' => [
-                            'third',
-                        ],
+                        'second',
                         'deuxième',
                     ],
                 ],

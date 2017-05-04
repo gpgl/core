@@ -51,20 +51,20 @@ class Database
         return $this;
     }
 
-    public function index(int $depth = 0) : array
+    public function index(int $limit = 1) : array
     {
-        return static::array_keys_recursive($this->getData(), $depth);
+        return static::array_keys_recursive($this->getData(), $limit);
     }
 
-    public static function array_keys_recursive(array $array, int $depth = -1, string ...$keys) : array
+    public static function array_keys_recursive(array $array, int $limit = 0, string ...$keys) : array
     {
-        if ($depth === 0) {
+        if ($limit === 1) {
             return array_keys($array);
         }
 
         foreach ($array as $key => $value) {
-            if (is_array($value)) {
-                $index[$key] = static::array_keys_recursive($value);
+            if (is_array($value) && --$limit) {
+                $index[$key] = static::array_keys_recursive($value, $limit);
             } else {
                 $index []= $key;
             }
