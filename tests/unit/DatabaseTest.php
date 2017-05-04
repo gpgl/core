@@ -59,9 +59,9 @@ class DatabaseTest extends TestCase
                 ], [
                     'first' => [
                         'second' => [
-                            'third',
+                            'third' => '',
                         ],
-                        'deuxième',
+                        'deuxième' => '',
                     ],
                 ],
             ],
@@ -75,7 +75,7 @@ class DatabaseTest extends TestCase
                         'deuxième' => 'two',
                     ],
                 ], [
-                    'first',
+                    'first' => '',
                 ],
             ],
             [
@@ -92,11 +92,11 @@ class DatabaseTest extends TestCase
                     'premier' => 'one',
                 ], [
                     'first' => [
-                        'second',
-                        'deuxième',
-                        'segundo',
+                        'second' => '',
+                        'deuxième' => '',
+                        'segundo' => '',
                     ],
-                    'premier',
+                    'premier' => '',
                 ],
             ],
             [
@@ -117,14 +117,14 @@ class DatabaseTest extends TestCase
                     ),
                 ), [
                     'uno' => [
-                        'username',
-                        'password',
+                        'username' => '',
+                        'password' => '',
                     ],
                     'dos' => [
-                        'everything',
-                        'something',
-                        'anything',
-                        'nothing',
+                        'everything' => '',
+                        'something' => '',
+                        'anything' => '',
+                        'nothing' => '',
                     ],
                 ],
             ],
@@ -139,9 +139,9 @@ class DatabaseTest extends TestCase
                     ],
                 ], [
                     'second' => [
-                        'third',
+                        'third' => '',
                     ],
-                    'deuxième',
+                    'deuxième' => '',
                 ],
                 'first',
             ],

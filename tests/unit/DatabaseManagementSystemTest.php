@@ -43,8 +43,8 @@ class DatabaseManagementSystemTest extends TestCase
     public function test_gets_index()
     {
         $expected = [
-            'first',
-            'second',
+            'first' => '',
+            'second' => '',
         ];
 
         $dbms = new DatabaseManagementSystem($this->filename_pw, $this->password, $this->key_pw);

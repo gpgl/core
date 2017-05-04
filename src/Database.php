@@ -56,25 +56,22 @@ class Database
 
     public function index(int $limit = 1, string ...$keys) : array
     {
-        return static::array_keys_recursive($this->getData(), $limit, ...$keys);
+        return static::array_clean_prune($this->getData(), $limit, ...$keys);
     }
 
-    public static function array_keys_recursive(array $array, int $limit = 0, string ...$keys) : array
+    public static function array_clean_prune(array $array, int $limit = 0, string ...$keys) : array
     {
         if (!empty($keys)) {
             $array = static::getFrom($array, ...$keys) ?? [];
         }
 
-        // return if this is the only level, else decrement and continue
-        if ($limit-- === 1) {
-            return array_keys($array);
-        }
+        --$limit;
 
         foreach ($array as $key => $value) {
             if (is_array($value) && $limit) {
-                $index[$key] = static::array_keys_recursive($value, $limit);
+                $index[$key] = static::array_clean_prune($value, $limit);
             } else {
-                $index []= $key;
+                $index[$key] = '';
             }
         }
 
