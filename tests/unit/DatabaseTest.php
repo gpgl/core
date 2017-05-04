@@ -94,6 +94,23 @@ class DatabaseTest extends TestCase
                     ],
                 ],
             ],
+            [
+                0,
+                [
+                    'first' => [
+                        'second' => [
+                            'third' => 'three',
+                        ],
+                        'deuxième' => 'two',
+                    ],
+                ], [
+                    'second' => [
+                        'third',
+                    ],
+                    'deuxième',
+                ],
+                'first',
+            ],
         ];
     }
 
@@ -125,11 +142,11 @@ class DatabaseTest extends TestCase
     /**
      * @dataProvider indexDataProvider
      */
-    public function test_gets_index(int $level, array $data, array $expected)
+    public function test_gets_index(int $level, array $data, array $expected, string ...$keys)
     {
         $db = new Database($data);
 
-        $actual = $db->index($level);
+        $actual = $db->index($level, ...$keys);
 
         $this->assertEquals($expected, $actual);
     }

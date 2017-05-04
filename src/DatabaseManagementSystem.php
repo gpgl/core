@@ -53,9 +53,9 @@ class DatabaseManagementSystem
         return $dbms;
     }
 
-    public function index() : array
+    public function index(int $limit = 1, string ...$keys) : array
     {
-        return $this->database->index();
+        return $this->database->index($limit, ...$keys);
     }
 
     public function get(string ...$keys)

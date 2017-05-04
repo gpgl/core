@@ -24,8 +24,11 @@ class Database
 
     public function get(string ...$keys)
     {
-        $data = $this->data;
+        return static::getFrom($this->data, ...$keys);
+    }
 
+    public static function getFrom(array $data, string ...$keys)
+    {
         while ($key = array_shift($keys)) {
             if (!isset($data[$key])) {
                 return null;
@@ -51,13 +54,17 @@ class Database
         return $this;
     }
 
-    public function index(int $limit = 1) : array
+    public function index(int $limit = 1, string ...$keys) : array
     {
-        return static::array_keys_recursive($this->getData(), $limit);
+        return static::array_keys_recursive($this->getData(), $limit, ...$keys);
     }
 
     public static function array_keys_recursive(array $array, int $limit = 0, string ...$keys) : array
     {
+        if (!empty($keys)) {
+            $array = static::getFrom($array, ...$keys) ?? [];
+        }
+
         if ($limit === 1) {
             return array_keys($array);
         }
