@@ -45,7 +45,9 @@ class Database
         $data =& $this->data;
 
         while ($key = array_shift($keys)) {
-            $data[$key] = $data[$key] ?? [];
+            if (!is_array($data[$key] ?? null)) {
+                $data[$key] = [];
+            }
             $data =& $data[$key];
         }
 

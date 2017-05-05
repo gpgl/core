@@ -184,4 +184,23 @@ class DatabaseTest extends TestCase
 
         $this->assertEquals($expected, $actual);
     }
+
+    public function test_overwrites_primitive_with_array()
+    {
+        $db = new Database;
+
+        $index = ['beg', 'mid'];
+        $orig = "original";
+        $empty = $db->get(...$index);
+        $this->assertEmpty($empty);
+        $db->set($orig, ...$index);
+        $actual = $db->get(...$index);
+        $this->assertEquals($orig, $actual);
+
+        $index = ['beg', 'mid', 'end'];
+        $new = "replacement";
+        $db->set($new, ...$index);
+        $actual = $db->get(...$index);
+        $this->assertEquals($new, $actual);
+    }
 }
