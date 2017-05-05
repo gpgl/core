@@ -203,4 +203,35 @@ class DatabaseTest extends TestCase
         $actual = $db->get(...$index);
         $this->assertEquals($new, $actual);
     }
+
+    public function test_deletes_value()
+    {
+        $db = new Database;
+
+        $index = ['beg', 'mid'];
+        $orig = "original";
+        $empty = $db->get(...$index);
+        $this->assertEmpty($empty);
+
+        $db->set($orig, ...$index);
+        $actual = $db->get(...$index);
+        $this->assertEquals($orig, $actual);
+
+        $db->delete(...$index);
+        $empty = $db->get(...$index);
+        $this->assertEmpty($empty);
+    }
+
+    public function test_deletes_value_regardless()
+    {
+        $db = new Database;
+
+        $index = ['beg', 'mid'];
+        $empty = $db->get(...$index);
+        $this->assertEmpty($empty);
+
+        $db->delete(...$index);
+        $empty = $db->get(...$index);
+        $this->assertEmpty($empty);
+    }
 }

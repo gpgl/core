@@ -79,4 +79,23 @@ class Database
 
         return $index ?? [];
     }
+
+    public function delete(string ...$keys) : Database
+    {
+        $data =& $this->data;
+
+        while (count($keys) > 1) {
+            $key = array_shift($keys);
+
+            if (!is_array($data[$key] ?? null)) {
+                return $this;
+            }
+
+            $data =& $data[$key];
+        }
+
+        unset($data[current($keys)]);
+
+        return $this;
+    }
 }

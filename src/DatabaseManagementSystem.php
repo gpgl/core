@@ -69,6 +69,12 @@ class DatabaseManagementSystem
         return $this;
     }
 
+    public function delete(string ...$keys) : DatabaseManagementSystem
+    {
+        $this->database->delete(...$keys);
+        return $this;
+    }
+
     public function getFilename() : string
     {
         return $this->filename;
