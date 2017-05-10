@@ -16,8 +16,8 @@ You can use the library in your own project with [composer][5]:
 
 ## Testing
 
-Because the tests require access to your GPG keyring,
-it's best to run them inside [the pre-built Docker container][18].
+Because the tests require access to your GPG keyring and fixtures need specific
+secret keys present, it's best to run them inside [the pre-built Docker container][18].
 
     docker run --rm -it -v "$PWD":/code gpgl/test-core
 
