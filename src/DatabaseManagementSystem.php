@@ -5,7 +5,8 @@ namespace gpgl\core;
 use Crypt_GPG;
 use Crypt_GPG_BadPassphraseException;
 use gpgl\core\Exceptions\PreExistingFile;
-use Exceptions\UnwritableFile;
+use gpgl\core\Exceptions\UnwritableFile;
+use gpgl\core\Exceptions\MissingRemote;
 
 class DatabaseManagementSystem
 {
@@ -14,6 +15,7 @@ class DatabaseManagementSystem
     protected $filename;
     protected $key;
     protected $password;
+    protected $remotes = [];
 
     public function __construct(string $filename = null, string $password = null, string $key = null)
     {
@@ -79,6 +81,26 @@ class DatabaseManagementSystem
         return $this;
     }
 
+    public function getMeta(string ...$keys)
+    {
+        $keys = array_merge(['meta'], $keys);
+        return $this->database->get(...$keys);
+    }
+
+    protected function setMeta($values, string ...$keys) : DatabaseManagementSystem
+    {
+        $keys = array_merge(['meta'], $keys);
+        $this->database->set($values, ...$keys);
+        return $this;
+    }
+
+    protected function deleteMeta(string ...$keys) : DatabaseManagementSystem
+    {
+        $keys = array_merge(['meta'], $keys);
+        $this->database->delete(...$keys);
+        return $this;
+    }
+
     public function getFilename() : string
     {
         return $this->filename;
@@ -120,6 +142,15 @@ class DatabaseManagementSystem
         return $this;
     }
 
+    public function getRemote(string $name) : Remote
+    {
+        if (empty($this->remotes[$name])) {
+            throw new MissingRemote("Remote '$name' does not exist.");
+        }
+
+        return $this->remotes[$name];
+    }
+
     public function import() : DatabaseManagementSystem
     {
         try {
@@ -138,6 +169,10 @@ class DatabaseManagementSystem
         $data = json_decode($json, $array = true);
 
         $this->database->setData($data);
+
+        foreach ($data['meta']['remotes'] ?? [] as $name => $remote) {
+            $this->remotes[$name] = new Remote($remote);
+        }
 
         return $this;
     }

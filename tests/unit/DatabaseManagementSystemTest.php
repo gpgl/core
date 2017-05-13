@@ -194,4 +194,45 @@ class DatabaseManagementSystemTest extends TestCase
 
         $dbms = DatabaseManagementSystem::create($filename, $this->key_nopw);
     }
+
+    public function test_gets_meta()
+    {
+        $expected = 'https://gpgl.example.org/api/v1/databases/1';
+
+        $dbms = new DatabaseManagementSystem($this->filename_nopw);
+        $actual = $dbms->getMeta('remotes', 'origin', 'url');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function test_gets_remote_url()
+    {
+        $expected = 'https://gpgl.example.org/api/v1/databases/1';
+
+        $dbms = new DatabaseManagementSystem($this->filename_nopw);
+        $actual = $dbms->getRemote('origin')->url();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function test_gets_remote_token()
+    {
+        $expected = 'RPAqQ^q1x46N&xDaLIBjQm?.5FCvss6_';
+
+        $dbms = new DatabaseManagementSystem($this->filename_nopw);
+        $actual = $dbms->getRemote('origin')->token();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @expectedException \gpgl\core\Exceptions\MissingRemote
+     */
+    public function test_throws_missing_remote_exception()
+    {
+        $dbms = new DatabaseManagementSystem($this->filename_nopw);
+        $actual = $dbms->getRemote('missing')->token();
+
+        $this->assertTrue(false);
+    }
 }

@@ -1,4 +1,12 @@
 {
+    "meta": {
+        "remotes": {
+            "origin": {
+                "url": "https://gpgl.example.org/api/v1/databases/1",
+                "token": "RPAqQ^q1x46N&xDaLIBjQm?.5FCvss6_"
+            }
+        }
+    },
     "data": {
         "one": {
             "username": "none",
