@@ -55,22 +55,26 @@ class DatabaseManagementSystem
 
     public function index(int $limit = 1, string ...$keys) : array
     {
+        $keys = array_merge(['data'], $keys);
         return $this->database->index($limit, ...$keys);
     }
 
     public function get(string ...$keys)
     {
+        $keys = array_merge(['data'], $keys);
         return $this->database->get(...$keys);
     }
 
     public function set($values, string ...$keys) : DatabaseManagementSystem
     {
+        $keys = array_merge(['data'], $keys);
         $this->database->set($values, ...$keys);
         return $this;
     }
 
     public function delete(string ...$keys) : DatabaseManagementSystem
     {
+        $keys = array_merge(['data'], $keys);
         $this->database->delete(...$keys);
         return $this;
     }

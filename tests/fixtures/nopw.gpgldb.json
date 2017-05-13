@@ -1,10 +1,12 @@
 {
-    "one": {
-        "username": "none",
-        "password": "nopw"
-    },
-    "two": {
-        "username": "nill",
-        "password": "nada"
+    "data": {
+        "one": {
+            "username": "none",
+            "password": "nopw"
+        },
+        "two": {
+            "username": "nill",
+            "password": "nada"
+        }
     }
 }
