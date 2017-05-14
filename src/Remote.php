@@ -2,9 +2,10 @@
 
 namespace gpgl\core;
 
+use JsonSerializable;
 use InvalidArgumentException;
 
-class Remote
+class Remote implements JsonSerializable
 {
     protected $url = '';
     protected $token = '';
@@ -40,5 +41,13 @@ class Remote
         }
 
         return $this->token;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'url' => $this->url(),
+            'token' => $this->token(),
+        ];
     }
 }

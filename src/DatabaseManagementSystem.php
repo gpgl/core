@@ -6,7 +6,6 @@ use Crypt_GPG;
 use Crypt_GPG_BadPassphraseException;
 use gpgl\core\Exceptions\PreExistingFile;
 use gpgl\core\Exceptions\UnwritableFile;
-use gpgl\core\Exceptions\MissingRemote;
 
 class DatabaseManagementSystem
 {
@@ -15,12 +14,12 @@ class DatabaseManagementSystem
     protected $filename;
     protected $key;
     protected $password;
-    protected $remotes = [];
+    protected $remoteManager;
 
     public function __construct(string $filename = null, string $password = null, string $key = null)
     {
         $this->database = new Database;
-
+        $this->remoteManager = new RemoteManager;
         $this->gpg = new Crypt_GPG;
 
         if (isset($password)) {
@@ -81,7 +80,7 @@ class DatabaseManagementSystem
         return $this;
     }
 
-    public function getMeta(string ...$keys)
+    protected function getMeta(string ...$keys)
     {
         $keys = array_merge(['meta'], $keys);
         return $this->database->get(...$keys);
@@ -142,13 +141,9 @@ class DatabaseManagementSystem
         return $this;
     }
 
-    public function getRemote(string $name) : Remote
+    public function remote() : RemoteManager
     {
-        if (empty($this->remotes[$name])) {
-            throw new MissingRemote("Remote '$name' does not exist.");
-        }
-
-        return $this->remotes[$name];
+        return $this->remoteManager;
     }
 
     public function import() : DatabaseManagementSystem
@@ -170,8 +165,8 @@ class DatabaseManagementSystem
 
         $this->database->setData($data);
 
-        foreach ($data['meta']['remotes'] ?? [] as $name => $remote) {
-            $this->remotes[$name] = new Remote($remote);
+        if (!empty($remote = $this->getMeta('remote'))) {
+            $this->remote()->import($remote);
         }
 
         return $this;
@@ -179,6 +174,8 @@ class DatabaseManagementSystem
 
     public function export() : DatabaseManagementSystem
     {
+        $this->setMeta($this->remote()->export(), 'remote');
+
         $json = json_encode($this->database->getData());
 
         $encryptedData = $this->gpg
