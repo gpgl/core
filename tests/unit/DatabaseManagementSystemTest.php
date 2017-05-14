@@ -225,4 +225,61 @@ class DatabaseManagementSystemTest extends TestCase
 
         $this->assertTrue(false);
     }
+
+    public function test_sets_remote()
+    {
+        $expected = [
+            'fortytwo' => [
+                'url' => 'https://gpgl.example.org/api/v1/databases/42',
+                'token' => 'n3jBnlz|.G_syNA13dbkRYQo^DP_XgwB',
+            ],
+            'fiftythree' => [
+                'url' => 'https://gpgl.example.org/api/v1/databases/53',
+                'token' => 'K>7~RE3iLyF?1F87vs&L{r^-Oe5kkSs_',
+            ],
+        ];
+
+        $dbms = new DatabaseManagementSystem($this->filename_nopw);
+        $dbms->remote()->set($expected);
+        $dbms->export();
+
+        $dbms = new DatabaseManagementSystem($this->filename_nopw);
+
+        $this->assertEquals(
+            $expected['fortytwo']['token'],
+            $dbms->remote()->get('fortytwo')->token()
+        );
+
+        $this->assertEquals(
+            $expected['fiftythree']['url'],
+            $dbms->remote()->get('fiftythree')->url()
+        );
+    }
+
+    public function test_saves_default_remote()
+    {
+        $expected = [
+            'fortytwo' => [
+                'url' => 'https://gpgl.example.org/api/v1/databases/42',
+                'token' => 'n3jBnlz|.G_syNA13dbkRYQo^DP_XgwB',
+            ],
+            'fiftythree' => [
+                'url' => 'https://gpgl.example.org/api/v1/databases/53',
+                'token' => 'K>7~RE3iLyF?1F87vs&L{r^-Oe5kkSs_',
+            ],
+        ];
+
+        $dbms = new DatabaseManagementSystem($this->filename_nopw);
+        $dbms->remote()->set($expected)->default('fortytwo');
+        $dbms->export();
+
+        $dbms = new DatabaseManagementSystem($this->filename_nopw);
+
+        $this->assertSame('fortytwo', $dbms->remote()->whichDefault());
+
+        $this->assertEquals(
+            $expected['fortytwo']['token'],
+            $dbms->remote()->default()->token()
+        );
+    }
 }

@@ -174,7 +174,7 @@ class DatabaseManagementSystem
 
     public function export() : DatabaseManagementSystem
     {
-        $this->setMeta($this->remote()->export(), 'remote');
+        $this->setMeta($this->remote(), 'remote');
 
         $json = json_encode($this->database->getData());
 
