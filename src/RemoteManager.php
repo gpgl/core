@@ -38,12 +38,20 @@ class RemoteManager implements JsonSerializable
             $this->default = $name;
         }
 
+        if (is_null($this->default)) {
+            throw new MissingRemote("A default remote has not been set.");
+        }
+
         return $this->get($this->default);
     }
 
     public function whichDefault() : string
     {
-        return $this->default ?? '';
+        if (is_null($this->default)) {
+            throw new MissingRemote("A default remote has not been set.");
+        }
+
+        return $this->default;
     }
 
     public function import(array $remoteManager) : RemoteManager
