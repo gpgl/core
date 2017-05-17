@@ -26,6 +26,12 @@ class History implements JsonSerializable
             throw new InvalidHistoryChain($error ?? null);
         }
 
+        foreach ($chain as $link) {
+            if (!is_array($link)) {
+                throw new InvalidHistoryChain('All chain links must be an array.');
+            }
+        }
+
         $this->chain = $chain;
     }
 
@@ -47,11 +53,11 @@ class History implements JsonSerializable
             return History::SAME;
         }
 
-        if (empty(array_diff_assoc($base, $target))) {
+        if (empty(static::array_diff_assoc_recursive($base, $target))) {
             return History::CHILD;
         }
 
-        if (empty(array_diff_assoc($target, $base))) {
+        if (empty(static::array_diff_assoc_recursive($target, $base))) {
             return History::PARENT;
         }
 
@@ -65,7 +71,32 @@ class History implements JsonSerializable
 
     public function push(string $content) : History
     {
-        $this->chain[date('c')] = sha1($content);
+        $this->chain [] [date('c')] = sha1($content);
         return $this;
+    }
+
+    /**
+     * @link https://secure.php.net/manual/en/function.array-diff-assoc.php#111675
+     */
+    public static function array_diff_assoc_recursive(array $array1, array $array2) : array
+    {
+        $difference = [];
+
+        foreach($array1 as $key => $value) {
+            if( is_array($value) ) {
+                if( !isset($array2[$key]) || !is_array($array2[$key]) ) {
+                    $difference[$key] = $value;
+                } else {
+                    $new_diff = static::array_diff_assoc_recursive($value, $array2[$key]);
+                    if( !empty($new_diff) ) {
+                        $difference[$key] = $new_diff;
+                    }
+                }
+            } else if( !array_key_exists($key,$array2) || $array2[$key] !== $value ) {
+                $difference[$key] = $value;
+            }
+        }
+
+        return $difference;
     }
 }
