@@ -6,6 +6,12 @@ use gpgl\core\Exceptions\InvalidHistoryChain;
 
 class History
 {
+    const SAME = 100;
+    const CHILD = 200;
+    const PARENT = 300;
+    const DIVERGED = 400;
+    const UNRELATED = 500;
+
     protected $chain = [];
 
     public function __construct($chain)
@@ -20,5 +26,21 @@ class History
         }
 
         $this->chain = $chain;
+    }
+
+    public function chain() : array
+    {
+        return $this->chain;
+    }
+
+    public static function compare(History $base, History $target) : int
+    {
+        foreach ($base->chain() as $time => $content) {
+            if (!isset($target->chain()[$time])) {
+                return History::CHILD;
+            }
+        }
+
+        return History::SAME;
     }
 }
