@@ -6,17 +6,8 @@ class History
 {
     protected $chain = [];
 
-    public function __construct($chain = null)
-    {
-        if (isset($chain)) {
-            $this->import($chain);
-        }
-    }
-
-    public function import($chain) : History
+    public function __construct($chain)
     {
         $this->chain = $chain;
-
-        return $this;
     }
 }
