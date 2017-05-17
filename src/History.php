@@ -2,9 +2,10 @@
 
 namespace gpgl\core;
 
+use JsonSerializable;
 use gpgl\core\Exceptions\InvalidHistoryChain;
 
-class History
+class History implements JsonSerializable
 {
     const SAME = 100;
     const CHILD = 200;
@@ -55,5 +56,10 @@ class History
         }
 
         return History::DIVERGED;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->chain();
     }
 }
