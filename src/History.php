@@ -42,7 +42,7 @@ class History
             return History::SAME;
         }
 
-        if (empty($diff = array_diff_assoc($base, $target))) {
+        if (empty(array_diff_assoc($base, $target))) {
             return History::CHILD;
         }
 
@@ -50,7 +50,7 @@ class History
             return History::PARENT;
         }
 
-        if (count($diff) === count($base)) {
+        if (array_slice($base, 0, 1) !== array_slice($target, 0, 1)) {
             return History::UNRELATED;
         }
 
