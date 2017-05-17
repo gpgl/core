@@ -15,11 +15,13 @@ class DatabaseManagementSystem
     protected $key;
     protected $password;
     protected $remoteManager;
+    protected $history;
 
     public function __construct(string $filename = null, string $password = null, string $key = null)
     {
         $this->database = new Database;
         $this->remoteManager = new RemoteManager;
+        $this->history = new History;
         $this->gpg = new Crypt_GPG;
 
         if (isset($password)) {
@@ -146,6 +148,11 @@ class DatabaseManagementSystem
         return $this->remoteManager;
     }
 
+    public function history() : array
+    {
+        return $this->history->chain();
+    }
+
     public function import() : DatabaseManagementSystem
     {
         try {
@@ -169,12 +176,22 @@ class DatabaseManagementSystem
             $this->remote()->import($remote);
         }
 
+        if (!empty($history = $this->getMeta('history'))) {
+            $this->history = new History($history);
+        }
+
         return $this;
     }
 
     public function export() : DatabaseManagementSystem
     {
         $this->setMeta($this->remote(), 'remote');
+
+        $json = json_encode($this->database->getData());
+
+        $this->history->push($json);
+
+        $this->setMeta($this->history, 'history');
 
         $json = json_encode($this->database->getData());
 

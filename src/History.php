@@ -15,7 +15,14 @@ class History implements JsonSerializable
 
     protected $chain = [];
 
-    public function __construct($chain)
+    public function __construct($chain = null)
+    {
+        if (isset($chain)) {
+            $this->import($chain);
+        }
+    }
+
+    public function import($chain)
     {
         if (is_string($chain)) {
             $chain = json_decode($chain, $array = true);
