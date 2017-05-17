@@ -35,24 +35,25 @@ class History
 
     public static function compare(History $base, History $target) : int
     {
-        if ($base == $target) {
+        $base = $base->chain();
+        $target = $target->chain();
+
+        if ($base === $target) {
             return History::SAME;
         }
 
-        if (empty(array_diff_assoc($base->chain(), $target->chain()))) {
+        if (empty($diff = array_diff_assoc($base, $target))) {
             return History::CHILD;
         }
 
-        if (empty(array_diff_assoc($target->chain(), $base->chain()))) {
+        if (empty(array_diff_assoc($target, $base))) {
             return History::PARENT;
         }
 
-        return History::DIVERGED;
-
-        foreach ($target->chain() as $time => $content) {
-            if (!isset($base->chain()[$time])) {
-                return History::PARENT;
-            }
+        if (count($diff) === count($base)) {
+            return History::UNRELATED;
         }
+
+        return History::DIVERGED;
     }
 }
