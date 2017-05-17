@@ -325,4 +325,39 @@ class HistoryTest extends TestCase
 
         $this->assertJsonStringEqualsJsonString($expected, $actual);
     }
+
+    public function test_pushes_history()
+    {
+        $start = time();
+        $original = new History([
+            '2017-04-18T18:28:33+00:00' => 'b0fa0ed340041483887c9939cc16e95e307236f9',
+            '2017-04-19T22:15:13+00:00' => '5f4ef154260613cb53788d9974f6fb9bf9b6f98e',
+            '2017-04-21T02:01:53+00:00' => '8c71b7da47c90be3c7c0dc9f7e30d0cc6ca3010c',
+            '2017-04-22T05:48:33+00:00' => 'f0421b1dda0fd3326280fb2fe9ae0c8ab3b4629b',
+            '2017-04-23T09:35:13+00:00' => '7b7b92ae20d3e365a75a96bd3c840d4b51f55025',
+            '2017-04-24T13:21:53+00:00' => 'b5a7f3507359dc38b69872b87bda0e9d96448448',
+            '2017-04-25T17:08:33+00:00' => '3ef6612fb10a6893dbf037c2efa2cd07c38fd9fe',
+            '2017-04-26T20:55:13+00:00' => '9392fd503334832fb49bdd245970510192d03079',
+            '2017-04-28T00:41:53+00:00' => '930882482c959f29c2f4b5dd67925c811bf5d9c6',
+        ]);
+        $history = clone $original;
+
+        $sha1 = '94e66df8cd09d410c62d9e0dc59d3a884e458e05'; // some content
+        $history->push('some content');
+
+        $this->assertSame(History::CHILD, History::compare($original, $history));
+
+        $chain = $history->chain();
+
+        $this->assertTrue(count($chain) === count($original->chain())+1);
+
+        $new = array_slice($chain, -1);
+
+        $this->assertSame($sha1, current($new));
+
+        $time = (int)(DateTime::createFromFormat(ISO8601, key($new)))->format(UNIXTIME);
+
+        $this->assertTrue($time >= $start);
+        $this->assertTrue($time <= time());
+    }
 }

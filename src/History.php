@@ -62,4 +62,10 @@ class History implements JsonSerializable
     {
         return $this->chain();
     }
+
+    public function push(string $content) : History
+    {
+        $this->chain[date('c')] = sha1($content);
+        return $this;
+    }
 }
