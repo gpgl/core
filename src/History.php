@@ -41,6 +41,12 @@ class History
             }
         }
 
+        foreach ($target->chain() as $time => $content) {
+            if (!isset($base->chain()[$time])) {
+                return History::PARENT;
+            }
+        }
+
         return History::SAME;
     }
 }
