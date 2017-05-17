@@ -38,6 +38,10 @@ class History
         $base = $base->chain();
         $target = $target->chain();
 
+        if (array_slice($base, 0, 1) !== array_slice($target, 0, 1)) {
+            return History::UNRELATED;
+        }
+
         if ($base === $target) {
             return History::SAME;
         }
@@ -48,10 +52,6 @@ class History
 
         if (empty(array_diff_assoc($target, $base))) {
             return History::PARENT;
-        }
-
-        if (array_slice($base, 0, 1) !== array_slice($target, 0, 1)) {
-            return History::UNRELATED;
         }
 
         return History::DIVERGED;
