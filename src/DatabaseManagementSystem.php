@@ -128,7 +128,7 @@ class DatabaseManagementSystem
         return $this;
     }
 
-    protected function getPassword() : string
+    public function getPassword() : string
     {
         if (is_null($this->password)) {
             throw new Crypt_GPG_BadPassphraseException('No password provided.');
