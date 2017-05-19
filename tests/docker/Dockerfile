@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y php php-mbstring wget php-zip php-xml p
     && php composer-setup.php --quiet \
     && mv composer.phar /usr/bin/composer \
     && apt-get purge -y wget \
+    && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf composer-setup.php /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && gpg --import /root/pw.asc \

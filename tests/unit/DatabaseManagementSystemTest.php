@@ -194,4 +194,110 @@ class DatabaseManagementSystemTest extends TestCase
 
         $dbms = DatabaseManagementSystem::create($filename, $this->key_nopw);
     }
+
+    public function test_gets_remote_url()
+    {
+        $expected = 'https://gpgl.example.org/api/v1/databases/1';
+
+        $dbms = new DatabaseManagementSystem($this->filename_nopw);
+        $actual = $dbms->remote()->get('origin')->url();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function test_gets_remote_token()
+    {
+        $expected = 'RPAqQ^q1x46N&xDaLIBjQm?.5FCvss6_';
+
+        $dbms = new DatabaseManagementSystem($this->filename_nopw);
+        $actual = $dbms->remote()->get('origin')->token();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @expectedException \gpgl\core\Exceptions\MissingRemote
+     */
+    public function test_throws_missing_remote_exception()
+    {
+        $dbms = new DatabaseManagementSystem($this->filename_nopw);
+        $actual = $dbms->remote()->get('missing')->token();
+
+        $this->assertTrue(false);
+    }
+
+    public function test_sets_remote()
+    {
+        $expected = [
+            'fortytwo' => [
+                'url' => 'https://gpgl.example.org/api/v1/databases/42',
+                'token' => 'n3jBnlz|.G_syNA13dbkRYQo^DP_XgwB',
+            ],
+            'fiftythree' => [
+                'url' => 'https://gpgl.example.org/api/v1/databases/53',
+                'token' => 'K>7~RE3iLyF?1F87vs&L{r^-Oe5kkSs_',
+            ],
+        ];
+
+        $dbms = new DatabaseManagementSystem($this->filename_nopw);
+        $dbms->remote()->set($expected);
+        $dbms->export();
+
+        $dbms = new DatabaseManagementSystem($this->filename_nopw);
+
+        $this->assertEquals(
+            $expected['fortytwo']['token'],
+            $dbms->remote()->get('fortytwo')->token()
+        );
+
+        $this->assertEquals(
+            $expected['fiftythree']['url'],
+            $dbms->remote()->get('fiftythree')->url()
+        );
+    }
+
+    public function test_saves_default_remote()
+    {
+        $expected = [
+            'fortytwo' => [
+                'url' => 'https://gpgl.example.org/api/v1/databases/42',
+                'token' => 'n3jBnlz|.G_syNA13dbkRYQo^DP_XgwB',
+            ],
+            'fiftythree' => [
+                'url' => 'https://gpgl.example.org/api/v1/databases/53',
+                'token' => 'K>7~RE3iLyF?1F87vs&L{r^-Oe5kkSs_',
+            ],
+        ];
+
+        $dbms = new DatabaseManagementSystem($this->filename_nopw);
+        $dbms->remote()->set($expected)->default('fortytwo');
+        $dbms->export();
+
+        $dbms = new DatabaseManagementSystem($this->filename_nopw);
+
+        $this->assertSame('fortytwo', $dbms->remote()->whichDefault());
+
+        $this->assertEquals(
+            $expected['fortytwo']['token'],
+            $dbms->remote()->default()->token()
+        );
+    }
+
+    public function test_saves_history()
+    {
+        $dbms1 = new DatabaseManagementSystem($this->filename_nopw);
+        $this->assertEmpty($dbms1->history());
+
+        $dbms1->set('something', 'test_saves_some_history');
+        $dbms1->export();
+
+        $dbms2 = new DatabaseManagementSystem($this->filename_nopw);
+        $this->assertCount(1, $dbms2->history());
+
+        $dbms2->set('anything', 'test_saves_more_history');
+        $dbms2->export();
+
+        $dbms3 = new DatabaseManagementSystem($this->filename_nopw);
+        $this->assertCount(2, $dbms3->history());
+    }
 }

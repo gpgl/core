@@ -24,4 +24,8 @@
         <log type="coverage-text" target="php://stdout"
             showUncoveredFiles="false"/>
     </logging>
+    <php>
+        <const name="ISO8601" value="Y-m-d\TH:i:sP"/>
+        <const name="UNIXTIME" value="U"/>
+    </php>
 </phpunit>

@@ -5,20 +5,29 @@ namespace gpgl\core;
 use Crypt_GPG;
 use Crypt_GPG_BadPassphraseException;
 use gpgl\core\Exceptions\PreExistingFile;
-use Exceptions\UnwritableFile;
+use gpgl\core\Exceptions\UnwritableFile;
 
 class DatabaseManagementSystem
 {
+    const VERSION = '0.1.0+dev';
     protected $database;
     protected $gpg;
     protected $filename;
     protected $key;
     protected $password;
+    protected $remoteManager;
+    protected $history;
 
     public function __construct(string $filename = null, string $password = null, string $key = null)
     {
-        $this->database = new Database;
-
+        $this->database = (new Database)->setData([
+            'meta' => [
+                'version' => static::VERSION,
+            ],
+            'data' => [],
+        ]);
+        $this->remoteManager = new RemoteManager;
+        $this->history = new History;
         $this->gpg = new Crypt_GPG;
 
         if (isset($password)) {
@@ -55,22 +64,46 @@ class DatabaseManagementSystem
 
     public function index(int $limit = 1, string ...$keys) : array
     {
+        $keys = array_merge(['data'], $keys);
         return $this->database->index($limit, ...$keys);
     }
 
     public function get(string ...$keys)
     {
+        $keys = array_merge(['data'], $keys);
         return $this->database->get(...$keys);
     }
 
     public function set($values, string ...$keys) : DatabaseManagementSystem
     {
+        $keys = array_merge(['data'], $keys);
         $this->database->set($values, ...$keys);
         return $this;
     }
 
     public function delete(string ...$keys) : DatabaseManagementSystem
     {
+        $keys = array_merge(['data'], $keys);
+        $this->database->delete(...$keys);
+        return $this;
+    }
+
+    protected function getMeta(string ...$keys)
+    {
+        $keys = array_merge(['meta'], $keys);
+        return $this->database->get(...$keys);
+    }
+
+    protected function setMeta($values, string ...$keys) : DatabaseManagementSystem
+    {
+        $keys = array_merge(['meta'], $keys);
+        $this->database->set($values, ...$keys);
+        return $this;
+    }
+
+    protected function deleteMeta(string ...$keys) : DatabaseManagementSystem
+    {
+        $keys = array_merge(['meta'], $keys);
         $this->database->delete(...$keys);
         return $this;
     }
@@ -101,7 +134,7 @@ class DatabaseManagementSystem
         return $this;
     }
 
-    protected function getPassword() : string
+    public function getPassword() : string
     {
         if (is_null($this->password)) {
             throw new Crypt_GPG_BadPassphraseException('No password provided.');
@@ -114,6 +147,16 @@ class DatabaseManagementSystem
     {
         $this->password = $password;
         return $this;
+    }
+
+    public function remote() : RemoteManager
+    {
+        return $this->remoteManager;
+    }
+
+    public function history() : array
+    {
+        return $this->history->chain();
     }
 
     public function import() : DatabaseManagementSystem
@@ -135,11 +178,26 @@ class DatabaseManagementSystem
 
         $this->database->setData($data);
 
+        if (!empty($remote = $this->getMeta('remote'))) {
+            $this->remote()->import($remote);
+        }
+
+        if (!empty($history = $this->getMeta('history'))) {
+            $this->history = new History($history);
+        }
+
         return $this;
     }
 
     public function export() : DatabaseManagementSystem
     {
+        $data = json_encode($this->database->getData()['data']);
+        $this->history->push($data);
+
+        $this->setMeta(static::VERSION, 'version');
+        $this->setMeta($this->remote(), 'remote');
+        $this->setMeta($this->history, 'history');
+
         $json = json_encode($this->database->getData());
 
         $encryptedData = $this->gpg
