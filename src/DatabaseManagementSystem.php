@@ -9,7 +9,7 @@ use gpgl\core\Exceptions\UnwritableFile;
 
 class DatabaseManagementSystem
 {
-    const VERSION = '1.0.0';
+    const VERSION = '1.0.0+dev';
     protected $database;
     protected $gpg;
     protected $filename;
