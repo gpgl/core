@@ -15,11 +15,13 @@ class DatabaseManagementSystem
     protected $key;
     protected $password;
     protected $remoteManager;
+    protected $history;
 
     public function __construct(string $filename = null, string $password = null, string $key = null)
     {
-        $this->database = new Database;
+        $this->database = (new Database)->setData(['data'=>[]]);
         $this->remoteManager = new RemoteManager;
+        $this->history = new History;
         $this->gpg = new Crypt_GPG;
 
         if (isset($password)) {
@@ -126,7 +128,7 @@ class DatabaseManagementSystem
         return $this;
     }
 
-    protected function getPassword() : string
+    public function getPassword() : string
     {
         if (is_null($this->password)) {
             throw new Crypt_GPG_BadPassphraseException('No password provided.');
@@ -144,6 +146,11 @@ class DatabaseManagementSystem
     public function remote() : RemoteManager
     {
         return $this->remoteManager;
+    }
+
+    public function history() : array
+    {
+        return $this->history->chain();
     }
 
     public function import() : DatabaseManagementSystem
@@ -169,12 +176,20 @@ class DatabaseManagementSystem
             $this->remote()->import($remote);
         }
 
+        if (!empty($history = $this->getMeta('history'))) {
+            $this->history = new History($history);
+        }
+
         return $this;
     }
 
     public function export() : DatabaseManagementSystem
     {
+        $data = json_encode($this->database->getData()['data']);
+        $this->history->push($data);
+
         $this->setMeta($this->remote(), 'remote');
+        $this->setMeta($this->history, 'history');
 
         $json = json_encode($this->database->getData());
 
