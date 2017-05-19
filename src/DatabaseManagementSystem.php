@@ -19,7 +19,7 @@ class DatabaseManagementSystem
 
     public function __construct(string $filename = null, string $password = null, string $key = null)
     {
-        $this->database = new Database;
+        $this->database = (new Database)->setData(['data'=>[]]);
         $this->remoteManager = new RemoteManager;
         $this->history = new History;
         $this->gpg = new Crypt_GPG;
@@ -185,12 +185,10 @@ class DatabaseManagementSystem
 
     public function export() : DatabaseManagementSystem
     {
+        $data = json_encode($this->database->getData()['data']);
+        $this->history->push($data);
+
         $this->setMeta($this->remote(), 'remote');
-
-        $json = json_encode($this->database->getData());
-
-        $this->history->push($json);
-
         $this->setMeta($this->history, 'history');
 
         $json = json_encode($this->database->getData());
