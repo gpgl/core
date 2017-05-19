@@ -9,6 +9,7 @@ use gpgl\core\Exceptions\UnwritableFile;
 
 class DatabaseManagementSystem
 {
+    const VERSION = '0.1.0+dev';
     protected $database;
     protected $gpg;
     protected $filename;
@@ -19,7 +20,12 @@ class DatabaseManagementSystem
 
     public function __construct(string $filename = null, string $password = null, string $key = null)
     {
-        $this->database = (new Database)->setData(['data'=>[]]);
+        $this->database = (new Database)->setData([
+            'meta' => [
+                'version' => static::VERSION,
+            ],
+            'data' => [],
+        ]);
         $this->remoteManager = new RemoteManager;
         $this->history = new History;
         $this->gpg = new Crypt_GPG;
@@ -188,6 +194,7 @@ class DatabaseManagementSystem
         $data = json_encode($this->database->getData()['data']);
         $this->history->push($data);
 
+        $this->setMeta(static::VERSION, 'version');
         $this->setMeta($this->remote(), 'remote');
         $this->setMeta($this->history, 'history');
 
