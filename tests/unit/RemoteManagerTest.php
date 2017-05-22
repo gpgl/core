@@ -60,8 +60,6 @@ class RemoteManagerTest extends TestCase
         ]);
 
         $rm->get('missing');
-
-        $this->assertTrue(false);
     }
 
     /**
@@ -79,8 +77,6 @@ class RemoteManagerTest extends TestCase
         ]);
 
         $rm->default();
-
-        $this->assertTrue(false);
     }
 
     /**
@@ -98,8 +94,6 @@ class RemoteManagerTest extends TestCase
         ]);
 
         $rm->whichDefault();
-
-        $this->assertTrue(false);
     }
 
     public function test_sets_default()
@@ -143,7 +137,44 @@ class RemoteManagerTest extends TestCase
         $rm->unsetDefault();
 
         $rm->default();
+    }
 
-        $this->assertTrue(false);
+    public function test_sets_remote()
+    {
+        $rm = new RemoteManager;
+
+        $rm->set([
+            'origin' => [
+                'url' => 'https://gpgl.example.org/api/v1/databases/1',
+                'token' => 'asdf',
+            ],
+        ]);
+
+        $actual = $rm->get('origin');
+
+        $this->assertInstanceOf(Remote::class, $actual);
+    }
+
+    /**
+     * @expectedException \gpgl\core\Exceptions\MissingRemote
+     */
+    public function test_unsets_remote()
+    {
+        $rm = new RemoteManager([
+            'remotes' => [
+                'origin' => [
+                    'url' => 'https://gpgl.example.org/api/v1/databases/1',
+                    'token' => 'asdf',
+                ],
+            ],
+        ]);
+
+        $remote = $rm->get('origin');
+
+        $this->assertInstanceOf(Remote::class, $remote);
+
+        $rm->unset('origin');
+
+        $rm->get('origin');
     }
 }

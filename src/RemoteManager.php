@@ -38,6 +38,12 @@ class RemoteManager implements JsonSerializable
         return $this;
     }
 
+    public function unset(string $remote) : RemoteManager
+    {
+        unset($this->remotes[$remote]);
+        return $this;
+    }
+
     public function default(string $name = null) : Remote
     {
         if (!is_null($name)) {
