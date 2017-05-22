@@ -10,6 +10,12 @@ class RemoteManager implements JsonSerializable
     protected $remotes = [];
     protected $default;
 
+    public function __construct(array $remoteManager = null) {
+        if (isset($remoteManager)) {
+            $this->import($remoteManager);
+        }
+    }
+
     public function get(string $name) : Remote
     {
         if (empty($this->remotes[$name])) {
@@ -29,6 +35,12 @@ class RemoteManager implements JsonSerializable
             $this->remotes[$name] = $remote;
         }
 
+        return $this;
+    }
+
+    public function unset(string $remote) : RemoteManager
+    {
+        unset($this->remotes[$remote]);
         return $this;
     }
 
@@ -52,6 +64,12 @@ class RemoteManager implements JsonSerializable
         }
 
         return $this->default;
+    }
+
+    public function unsetDefault() : RemoteManager
+    {
+        $this->default = null;
+        return $this;
     }
 
     public function import(array $remoteManager) : RemoteManager

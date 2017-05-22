@@ -215,17 +215,6 @@ class DatabaseManagementSystemTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * @expectedException \gpgl\core\Exceptions\MissingRemote
-     */
-    public function test_throws_missing_remote_exception()
-    {
-        $dbms = new DatabaseManagementSystem($this->filename_nopw);
-        $actual = $dbms->remote()->get('missing')->token();
-
-        $this->assertTrue(false);
-    }
-
     public function test_sets_remote()
     {
         $expected = [
