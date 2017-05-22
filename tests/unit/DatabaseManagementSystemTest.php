@@ -286,18 +286,28 @@ class DatabaseManagementSystemTest extends TestCase
     public function test_saves_history()
     {
         $dbms1 = new DatabaseManagementSystem($this->filename_nopw);
-        $this->assertEmpty($dbms1->history());
 
         $dbms1->set('something', 'test_saves_some_history');
         $dbms1->export();
 
         $dbms2 = new DatabaseManagementSystem($this->filename_nopw);
-        $this->assertCount(1, $dbms2->history());
+        $this->assertCount(3, $dbms2->history());
 
         $dbms2->set('anything', 'test_saves_more_history');
         $dbms2->export();
 
         $dbms3 = new DatabaseManagementSystem($this->filename_nopw);
-        $this->assertCount(2, $dbms3->history());
+        $this->assertCount(4, $dbms3->history());
+    }
+
+    public function test_gets_version_number()
+    {
+        $expected = '1.0.0';
+
+        $dbms = new DatabaseManagementSystem($this->filename_nopw);
+
+        $actual = $dbms->version();
+
+        $this->assertSame($expected, $actual);
     }
 }

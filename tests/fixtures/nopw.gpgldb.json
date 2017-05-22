@@ -1,22 +1,32 @@
 {
-    "meta": {
-        "remote": {
-            "remotes": {
-                "origin": {
-                    "url": "https://gpgl.example.org/api/v1/databases/1",
-                    "token": "RPAqQ^q1x46N&xDaLIBjQm?.5FCvss6_"
-                }
-            }
+  "meta": {
+    "remote": {
+      "default": null,
+      "remotes": {
+        "origin": {
+          "url": "https://gpgl.example.org/api/v1/databases/1",
+          "token": "RPAqQ^q1x46N&xDaLIBjQm?.5FCvss6_"
         }
+      }
     },
-    "data": {
-        "one": {
-            "username": "none",
-            "password": "nopw"
-        },
-        "two": {
-            "username": "nill",
-            "password": "nada"
-        }
+    "version": "1.0.0",
+    "history": [
+      {
+        "2017-05-22T15:01:14+00:00": "190cce1c1ad8c5afbc8b8fb8961be4ee735c3ec1"
+      },
+      {
+        "2017-05-22T15:01:41+00:00": "766eb9922f8d65a1e7518e0f7d3167813f977c83"
+      }
+    ]
+  },
+  "data": {
+    "one": {
+      "username": "none",
+      "password": "nopw"
+    },
+    "two": {
+      "username": "nill",
+      "password": "nada"
     }
+  }
 }

@@ -159,6 +159,16 @@ class DatabaseManagementSystem
         return $this->history->chain();
     }
 
+    /**
+     * Returns the gpgl core version number.
+     *
+     * @return string|null
+     */
+    public function version()
+    {
+        return $this->getMeta('version');
+    }
+
     public function import() : DatabaseManagementSystem
     {
         try {
