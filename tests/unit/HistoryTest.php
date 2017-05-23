@@ -403,4 +403,17 @@ class HistoryTest extends TestCase
         $this->assertTrue($time2 >= $start);
         $this->assertTrue($time2 <= time());
     }
+
+    public function test_does_not_push_without_changes()
+    {
+        $history = new History([
+            ['2017-04-18T18:28:33+00:00' => 'b0fa0ed340041483887c9939cc16e95e307236f9'],
+            ['2017-04-19T22:15:13+00:00' => '5f4ef154260613cb53788d9974f6fb9bf9b6f98e'],
+            ['2017-04-21T02:01:53+00:00' => '94e66df8cd09d410c62d9e0dc59d3a884e458e05'],
+        ]);
+
+        $history->push('some content'); // 94e66df8cd09d410c62d9e0dc59d3a884e458e05
+
+        $this->assertCount(3, $history->chain());
+    }
 }
