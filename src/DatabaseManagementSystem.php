@@ -186,6 +186,10 @@ class DatabaseManagementSystem
 
         $data = json_decode($json, $array = true);
 
+        if (empty($data['meta']['version'])) {
+            $data['data'] = $data;
+        }
+
         $this->database->setData($data);
 
         if (!empty($remote = $this->getMeta('remote'))) {

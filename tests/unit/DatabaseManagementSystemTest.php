@@ -299,4 +299,19 @@ class DatabaseManagementSystemTest extends TestCase
 
         $this->assertSame($expected, $actual);
     }
+
+    public function test_imports_new_data_from_json()
+    {
+        $filename = __DIR__.'/../fixtures/pw.new.json.gpg';
+        $expected = [
+            "something" => "",
+            "anything" => "",
+        ];
+
+        $dbms = new DatabaseManagementSystem($filename, $this->password);
+
+        $actual = $dbms->index();
+
+        $this->assertSame($expected, $actual);
+    }
 }
