@@ -11,7 +11,7 @@ use Composer\Semver\Semver;
 
 class DatabaseManagementSystem
 {
-    const VERSION = '1.2.0';
+    const VERSION = '1.2.0+dev';
     const VERSION_CONSTRAINT = '<2';
     protected $database;
     protected $gpg;
