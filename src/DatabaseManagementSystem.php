@@ -6,10 +6,13 @@ use Crypt_GPG;
 use Crypt_GPG_BadPassphraseException;
 use gpgl\core\Exceptions\PreExistingFile;
 use gpgl\core\Exceptions\UnwritableFile;
+use gpgl\core\Exceptions\ObsoleteClient;
+use Composer\Semver\Semver;
 
 class DatabaseManagementSystem
 {
     const VERSION = '1.1.0+dev';
+    const VERSION_CONSTRAINT = '<2';
     protected $database;
     protected $gpg;
     protected $filename;
@@ -187,10 +190,24 @@ class DatabaseManagementSystem
         $data = json_decode($json, $array = true);
 
         if (empty($data['meta']['version'])) {
-            $data['data'] = $data;
+            $temp = [
+                'meta' => [
+                    'version' => static::VERSION,
+                ],
+                'data' => $data,
+            ];
+
+            $data = $temp;
         }
 
         $this->database->setData($data);
+
+        if (!Semver::satisfies($this->version(), static::VERSION_CONSTRAINT)) {
+            throw new ObsoleteClient(
+                'The database was created with a newer version of gpgl. '.
+                'Upgrade your client.'
+            );
+        }
 
         if (!empty($remote = $this->getMeta('remote'))) {
             $this->remote()->import($remote);

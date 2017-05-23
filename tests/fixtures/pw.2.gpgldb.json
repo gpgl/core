@@ -1,0 +1,15 @@
+{
+    "meta": {
+        "version": "2.0.0"
+    },
+    "data": {
+        "first": {
+            "username": "jeff",
+            "password": "pass"
+        },
+        "second": {
+            "username": "puck",
+            "password": "P@55"
+        }
+    }
+}

@@ -10,7 +10,8 @@
     ],
     "require": {
         "php": "^7.0",
-        "pear/crypt_gpg": "^1.6"
+        "pear/crypt_gpg": "^1.6",
+        "composer/semver": "^1.4"
     },
     "autoload": {
         "psr-4": {

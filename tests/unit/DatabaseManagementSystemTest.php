@@ -314,4 +314,14 @@ class DatabaseManagementSystemTest extends TestCase
 
         $this->assertSame($expected, $actual);
     }
+
+    /**
+     * @expectedException \gpgl\core\Exceptions\ObsoleteClient
+     */
+    public function test_throws_exception_for_incompatible_new_version()
+    {
+        $filename = __DIR__.'/../fixtures/pw.2.gpgldb';
+
+        $dbms = new DatabaseManagementSystem($filename, $this->password);
+    }
 }

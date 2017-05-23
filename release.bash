@@ -13,6 +13,17 @@ cd $( dirname "${BASH_SOURCE[0]}" )
 # add version to script
 sed -r -i "s/const VERSION = '.+\+dev'/const VERSION = '$1'/" src/DatabaseManagementSystem.php
 
+php -r '
+    require "vendor/autoload.php";
+
+    use Composer\Semver\Semver;
+    use gpgl\core\DatabaseManagementSystem as DB;
+
+    if (!Semver::satisfies(DB::VERSION, DB::VERSION_CONSTRAINT)) {
+        throw new Exception("version does not satisfy version constraint");
+    }
+'
+
 git commit -am "release version $1"
 git tag -s "$1"
 
