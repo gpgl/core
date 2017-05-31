@@ -2,6 +2,7 @@
 
 [![Build Status][12]][11]
 [![Codecov][16]][14]
+[![SensioLabsInsight][19]][20]
 [![Latest Stable Version][7]][6]
 [![Total Downloads][8]][6]
 [![License][9]][6]
@@ -42,3 +43,5 @@ The [Dockerfile][17] is also provided for customization.
 [16]:https://img.shields.io/codecov/c/github/gpgl/core/master.svg
 [17]:./tests/docker/Dockerfile
 [18]:https://hub.docker.com/r/gpgl/test-core/
+[19]:https://insight.sensiolabs.com/projects/c93e65d6-9b67-4e90-8e45-a031cf4bfd31/mini.png
+[20]:https://insight.sensiolabs.com/projects/c93e65d6-9b67-4e90-8e45-a031cf4bfd31
