@@ -177,7 +177,7 @@ class DatabaseManagementSystemTest extends TestCase
         unlink($filename);
         $this->assertFileNotExists($filename);
 
-        $dbms = DatabaseManagementSystem::create($filename, $this->key_nopw);
+        $dbms = DatabaseManagementSystem::create($filename, $this->key_pw, $this->password);
         $this->assertFileExists($filename);
 
         $this->assertInstanceOf(DatabaseManagementSystem::class, $dbms);

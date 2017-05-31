@@ -57,7 +57,7 @@ class DatabaseManagementSystem
         $dbms->setFilename($filename)->setKey($key);
 
         if (isset($password)) {
-            $this->setPassword($password);
+            $dbms->setPassword($password);
         }
 
         $dbms->export();
